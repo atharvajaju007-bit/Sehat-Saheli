@@ -29,6 +29,14 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         env=settings.APP_ENV,
         debug=settings.DEBUG,
     )
+
+    # Auto-seed quiz, learn, flashcard data on first run
+    try:
+        from app.seeds.seed_data import seed
+        await seed()
+    except Exception as e:
+        logger.warning("seed_skipped", reason=str(e))
+
     yield
     logger.info("app_shutting_down")
 
