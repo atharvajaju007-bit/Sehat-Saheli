@@ -6,7 +6,6 @@ Loads from environment variables with .env file support.
 from functools import lru_cache
 from typing import List
 
-from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -40,21 +39,25 @@ class Settings(BaseSettings):
     GEMINI_API_KEY: str = ""
 
     # ── CORS ─────────────────────────────────────────────────────
-    CORS_ORIGINS: List[str] = ["http://localhost:3000"]
+    CORS_ORIGINS: str = "http://localhost:3000"
 
     # ── Rate Limiting ────────────────────────────────────────────
     RATE_LIMIT_PER_MINUTE: int = 60
 
-    @field_validator("CORS_ORIGINS", mode="before")
-    @classmethod
-    def parse_cors_origins(cls, v: str | List[str]) -> List[str]:
-        if isinstance(v, str):
-            import json
+    @property
+    def cors_origins_list(self) -> List[str]:
+        """Parse CORS_ORIGINS string into a list. Handles JSON arrays and comma-separated values."""
+        import json
+        v = self.CORS_ORIGINS
+        if not v or not v.strip():
+            return ["http://localhost:3000"]
+        v = v.strip()
+        if v.startswith("["):
             try:
                 return json.loads(v)
             except json.JSONDecodeError:
-                return [origin.strip() for origin in v.split(",")]
-        return v
+                pass
+        return [origin.strip().strip('"').strip("'") for origin in v.split(",") if origin.strip()]
 
     @property
     def is_production(self) -> bool:
