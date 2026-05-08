@@ -24,16 +24,17 @@ export function MessageBubble({ message }: MessageBubbleProps) {
       className={cn("flex gap-3 px-4 py-2", isUser ? "flex-row-reverse" : "flex-row")}
     >
       {/* Avatar */}
-      <div
-        className={cn(
-          "flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-lg shadow-sm",
-          isUser
-            ? "bg-gradient-to-br from-lavender-300 to-lavender-400"
-            : "bg-gradient-to-br from-dusty-rose-300 to-warm-peach-300"
-        )}
-      >
-        {isUser ? "👩" : "🌸"}
-      </div>
+      {isUser ? (
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-lg shadow-sm bg-gradient-to-br from-lavender-300 to-lavender-400">
+          👩
+        </div>
+      ) : (
+        <img
+          src="/icons/saheli-avatar.png"
+          alt="Saheli"
+          className="h-9 w-9 shrink-0 rounded-full shadow-sm object-cover"
+        />
+      )}
 
       {/* Message Content */}
       <div

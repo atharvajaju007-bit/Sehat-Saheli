@@ -9,9 +9,11 @@ import { motion } from "framer-motion";
 export function TypingIndicator() {
   return (
     <div className="flex gap-3 px-4 py-2">
-      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-dusty-rose-300 to-warm-peach-300 text-lg shadow-sm">
-        🌸
-      </div>
+      <img
+        src="/icons/saheli-avatar.png"
+        alt="Saheli"
+        className="h-9 w-9 shrink-0 rounded-full shadow-sm object-cover"
+      />
       <div className="flex items-center gap-1.5 rounded-2xl rounded-tl-sm bg-gradient-to-br from-dusty-rose-50 to-warm-peach-50 px-5 py-3 shadow-sm">
         {[0, 1, 2].map((i) => (
           <motion.div
