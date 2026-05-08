@@ -126,9 +126,12 @@ class ChatService:
         )
         ai_msg = await self._message_repo.create(ai_msg)
 
-        # Update session title from first message if still default
+        # Generate a descriptive title using AI for the first message
         if chat_session.title == "New Chat":
-            title = data.content[:50] + ("..." if len(data.content) > 50 else "")
+            title = await self._ai_service.generate_title(
+                user_message=data.content,
+                ai_response=ai_response_text,
+            )
             await self._session_repo.update(chat_session, {"title": title})
 
         logger.info(

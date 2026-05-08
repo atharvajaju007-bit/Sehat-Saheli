@@ -115,6 +115,47 @@ class GeminiAIService:
             logger.error("ai_service_error", error=str(e))
             return self._get_fallback_response(language)
 
+    async def generate_title(
+        self,
+        user_message: str,
+        ai_response: str,
+    ) -> str:
+        """
+        Generate a short, descriptive chat title from the conversation.
+        Falls back to truncated user message if AI is unavailable.
+        """
+        if not self._client:
+            return user_message[:40] + ("..." if len(user_message) > 40 else "")
+
+        try:
+            prompt = (
+                "Generate a very short title (max 6 words) for a health chat conversation. "
+                "The title should capture the main topic discussed. "
+                "Return ONLY the title, no quotes, no explanation.\n\n"
+                f"User asked: {user_message[:200]}\n"
+                f"Assistant replied about: {ai_response[:200]}\n\n"
+                "Title:"
+            )
+
+            response = self._client.models.generate_content(
+                model=self.MODEL_NAME,
+                contents=prompt,
+            )
+
+            if response and response.text:
+                title = response.text.strip().strip('"').strip("'")
+                # Ensure it's not too long
+                if len(title) > 60:
+                    title = title[:57] + "..."
+                logger.info("chat_title_generated", title=title)
+                return title
+
+        except Exception as e:
+            logger.error("title_generation_error", error=str(e))
+
+        # Fallback
+        return user_message[:40] + ("..." if len(user_message) > 40 else "")
+
     @staticmethod
     def _build_context(history: list[dict[str, str]], max_messages: int = 10) -> str:
         """Format conversation history for the AI prompt context window."""

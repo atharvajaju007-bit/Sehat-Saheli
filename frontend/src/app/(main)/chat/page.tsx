@@ -24,6 +24,7 @@ export default function ChatPage() {
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [showSidebar, setShowSidebar] = useState(false);
+  const [isSending, setIsSending] = useState(false);
 
   // Fetch chat sessions (sidebar list)
   const { data: sessions = [] } = useQuery({
@@ -93,14 +94,18 @@ export default function ChatPage() {
   });
 
   // Auto-scroll to bottom on new messages
+  // Track loading from both paths
+  const isLoading = isSending || sendMessageMutation.isPending;
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, sendMessageMutation.isPending]);
+  }, [messages, isLoading]);
 
   const handleSend = useCallback(
     async (content: string) => {
       if (!activeSessionId) {
         // Create session first, then send message
+        setIsSending(true);
         try {
           const session = await chatApi.createSession({ language });
           setActiveSessionId(session.id);
@@ -121,6 +126,8 @@ export default function ChatPage() {
           queryClient.invalidateQueries({ queryKey: ["chatSessions"] });
         } catch {
           // Handle error
+        } finally {
+          setIsSending(false);
         }
         return;
       }
@@ -278,14 +285,14 @@ export default function ChatPage() {
             <MessageBubble key={msg.id} message={msg} />
           ))}
 
-          {sendMessageMutation.isPending && <TypingIndicator />}
+          {isLoading && <TypingIndicator />}
           <div ref={messagesEndRef} />
         </div>
 
         {/* Input Area */}
         <ChatInput
           onSend={handleSend}
-          isLoading={sendMessageMutation.isPending}
+          isLoading={isLoading}
           placeholder={language === "hi" ? "अपना सवाल लिखें..." : "Type your question..."}
         />
       </div>

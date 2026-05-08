@@ -67,6 +67,11 @@
     -webkit-tap-highlight-color: transparent;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  .dark body {
+    @apply bg-gray-900 text-gray-100;
   }
 
   /* Tailwind v4 removed default cursor:pointer — restore it globally */
@@ -95,6 +100,36 @@
   }
   ::-webkit-scrollbar-thumb:hover {
     background: var(--color-dusty-rose-300);
+  }
+
+  /* Dark mode overrides for common elements */
+  .dark .border-dusty-rose-100 {
+    border-color: rgb(55 65 81);
+  }
+  .dark .bg-white\/60,
+  .dark .bg-white\/95 {
+    background-color: rgb(17 24 39 / 0.95);
+  }
+  .dark .bg-white {
+    background-color: rgb(31 41 55);
+  }
+  .dark .text-gray-800 {
+    color: rgb(229 231 235);
+  }
+  .dark .text-gray-600 {
+    color: rgb(209 213 219);
+  }
+  .dark .text-gray-500 {
+    color: rgb(156 163 175);
+  }
+  .dark .text-gray-400 {
+    color: rgb(156 163 175);
+  }
+  .dark .hover\:bg-gray-50:hover {
+    background-color: rgb(55 65 81);
+  }
+  .dark .bg-gradient-to-br.from-dusty-rose-50 {
+    --tw-gradient-from: rgb(55 65 81);
   }
 }
 
