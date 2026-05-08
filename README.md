@@ -40,7 +40,8 @@ mysql -u root -e "CREATE DATABASE IF NOT EXISTS sehat_saheli CHARACTER SET utf8m
 # Run migrations
 alembic upgrade head
 
-# Seed database with quiz, learn, flashcard data
+# Seed database with quiz, learn, flashcard, and health camp data
+# (Also auto-seeds on first app startup)
 python -m app.seeds.seed_data
 
 # Start development server
@@ -121,10 +122,11 @@ sehat-saheli/
 - ❤️ **Health Dashboard** — Menstrual cycle tracker with logging, prediction, and analytics
 - 🌐 **Multilingual Content** — Quiz, learn, and flashcard content in English + Hindi
 
-### Phase 3 (Planned)
-- 🏥 **Health Camps** — Government health camp alerts with map
-- 🔔 **Push Notifications** — Period reminders and health tips
-- 📊 **Advanced Analytics** — Charts and trends for cycle data
+### Phase 3 ✅ (Shipped)
+- 🏥 **Health Camps** — Live government health camp alerts with state filtering, expandable cards, contact links
+- 🎨 **Component Dark Mode** — All base UI components (Card, Input, Label) now dark-mode native
+- 📅 **Themed Date Picker** — Dark mode calendar picker with custom styling
+- 🌱 **Auto Seed** — Database auto-seeds on first startup (no manual scripts needed)
 
 ## API Endpoints
 
@@ -150,6 +152,8 @@ sehat-saheli/
 | Dashboard | GET | `/api/v1/cycles` | Get cycle history |
 | Dashboard | GET | `/api/v1/cycles/predict` | Predict next cycle |
 | Dashboard | GET | `/api/v1/cycles/analytics` | Get analytics |
+| Health Camps | GET | `/api/v1/health-camps` | List camps (filterable) |
+| Health Camps | GET | `/api/v1/health-camps/{id}` | Camp details |
 
 ## Languages Supported
 
