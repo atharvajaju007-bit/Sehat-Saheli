@@ -132,16 +132,17 @@ html.dark [class*="border-dusty-rose-200"] {
 }
 
 /* Light gradient backgrounds → dark equivalents */
-html.dark [class*="from-dusty-rose-50"],
-html.dark [class*="from-warm-peach-50"],
-html.dark [class*="from-sage-50"],
-html.dark [class*="from-lavender-50"] {
+/* :not text-transparent excludes gradient-text titles like "Sehat Saheli" */
+html.dark [class*="from-dusty-rose-50"]:not([class*="text-transparent"]),
+html.dark [class*="from-warm-peach-50"]:not([class*="text-transparent"]),
+html.dark [class*="from-sage-50"]:not([class*="text-transparent"]),
+html.dark [class*="from-lavender-50"]:not([class*="text-transparent"]) {
   --tw-gradient-from: rgb(55 65 81) !important;
 }
-html.dark [class*="to-dusty-rose-50"],
-html.dark [class*="to-warm-peach-50"],
-html.dark [class*="to-sage-100"],
-html.dark [class*="to-lavender-50"] {
+html.dark [class*="to-dusty-rose-50"]:not([class*="text-transparent"]),
+html.dark [class*="to-warm-peach-50"]:not([class*="text-transparent"]),
+html.dark [class*="to-sage-100"]:not([class*="text-transparent"]),
+html.dark [class*="to-lavender-50"]:not([class*="text-transparent"]) {
   --tw-gradient-to: rgb(75 85 99) !important;
 }
 
