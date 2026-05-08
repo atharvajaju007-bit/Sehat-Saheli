@@ -72,37 +72,54 @@ npm run dev
 
 ```
 sehat-saheli/
-├── frontend/          # Next.js PWA
+├── frontend/                   # Next.js 16 PWA (App Router + TypeScript)
 │   ├── src/
-│   │   ├── app/       # Pages (App Router)
-│   │   │   ├── (auth)/     # Login & Register (public)
-│   │   │   └── (main)/     # Authenticated pages (guarded)
-│   │   ├── components/  # UI components
-│   │   │   ├── chat/    # Chat feature (messages, input, typing)
-│   │   │   ├── layout/  # TopBar, BottomNav, Toast, OfflineBanner
-│   │   │   └── ui/      # ShadCN primitives (Button, Card, Input...)
-│   │   ├── lib/       # Utilities, API, stores, i18n
-│   │   │   ├── api/   # Axios client + typed endpoint wrappers
-│   │   │   └── stores/  # Zustand (auth, UI, toast)
-│   │   ├── providers/ # React context providers
-│   │   └── types/     # TypeScript definitions
-│   └── public/        # Static assets + PWA manifest
+│   │   ├── app/                # Pages
+│   │   │   ├── (auth)/         # Public routes
+│   │   │   │   ├── login/      # Phone + password login
+│   │   │   │   └── register/   # Registration with language selection
+│   │   │   ├── (main)/         # Authenticated routes (JWT-guarded)
+│   │   │   │   ├── chat/       # AI chatbot with session management
+│   │   │   │   ├── learn/      # Health education articles by category
+│   │   │   │   ├── quiz/       # Interactive quiz engine with scoring
+│   │   │   │   ├── flashcards/ # 3D flip flashcard decks
+│   │   │   │   ├── dashboard/  # Cycle tracker + predictions + analytics
+│   │   │   │   ├── health-camps/ # Government health camp alerts
+│   │   │   │   └── profile/    # User profile + settings
+│   │   │   └── page.tsx        # Landing page
+│   │   ├── components/
+│   │   │   ├── chat/           # MessageBubble, ChatInput, TypingDots
+│   │   │   ├── layout/         # TopBar, BottomNav, Toast, OfflineBanner
+│   │   │   └── ui/             # ShadCN primitives (Button, Card, Input, Label)
+│   │   ├── lib/
+│   │   │   ├── api/            # Axios client + typed endpoint wrappers
+│   │   │   │   ├── client.ts   # Axios instance with JWT interceptors
+│   │   │   │   └── endpoints.ts # auth, chat, quiz, learn, flashcard, cycle, healthCamp APIs
+│   │   │   ├── stores/         # Zustand stores (auth, UI, toast)
+│   │   │   └── constants.ts    # Supported languages, app config
+│   │   ├── providers/          # React Query + auth context providers
+│   │   └── types/              # TypeScript interfaces for all API entities
+│   └── public/                 # Static assets, PWA icons, manifest
 │
-├── backend/           # FastAPI API
+├── backend/                    # FastAPI (Async + SQLAlchemy 2.0)
 │   ├── app/
-│   │   ├── api/v1/    # Route handlers
-│   │   │   ├── auth.py       # Register, login, profile
-│   │   │   ├── chat.py       # Chat sessions & AI messages
-│   │   │   ├── quiz.py       # Quiz categories & attempts
-│   │   │   ├── learn.py      # Health education articles
-│   │   │   ├── flashcards.py # Flashcard decks & cards
-│   │   │   └── dashboard.py  # Cycle tracking & analytics
-│   │   ├── core/      # Config, security, middleware
-│   │   ├── models/    # SQLAlchemy ORM models
-│   │   ├── schemas/   # Pydantic validation
-│   │   ├── services/  # Business logic (AI, auth, chat)
-│   │   └── seeds/     # Seed data (quiz, learn, flashcards)
-│   └── alembic/       # Database migrations
+│   │   ├── api/v1/             # Route handlers (7 routers, 32 routes)
+│   │   │   ├── auth.py         # Register, login, profile
+│   │   │   ├── chat.py         # Chat sessions & AI messages (Gemini)
+│   │   │   ├── quiz.py         # Quiz categories, questions & attempts
+│   │   │   ├── learn.py        # Health education categories & articles
+│   │   │   ├── flashcards.py   # Flashcard decks & cards
+│   │   │   ├── dashboard.py    # Cycle logging, prediction & analytics
+│   │   │   └── health_camps.py # Health camp listing & filtering
+│   │   ├── core/               # Config, JWT security, CORS, logging
+│   │   ├── models/             # SQLAlchemy ORM models (8 tables)
+│   │   ├── schemas/            # Pydantic request/response validation
+│   │   ├── services/           # Business logic (AI, auth, chat)
+│   │   ├── seeds/              # Auto-seed data (runs on first startup)
+│   │   └── main.py             # App factory + lifespan (auto-seed)
+│   └── alembic/                # Database migrations
+│
+└── README.md
 ```
 
 ## Features
