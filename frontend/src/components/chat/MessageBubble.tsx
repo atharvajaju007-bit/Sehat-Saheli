@@ -46,12 +46,14 @@ export function MessageBubble({ message }: MessageBubbleProps) {
         )}
       >
         <p className="whitespace-pre-wrap">{message.content}</p>
-        <time className="mt-1 block text-right text-[10px] text-gray-400">
-          {new Date(message.created_at).toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          })}
-        </time>
+        {message.id !== "welcome" && (
+          <time className="mt-1 block text-right text-[10px] text-gray-400">
+            {new Date(message.created_at).toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
+          </time>
+        )}
       </div>
     </motion.div>
   );
