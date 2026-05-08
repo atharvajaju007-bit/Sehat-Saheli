@@ -40,6 +40,9 @@ mysql -u root -e "CREATE DATABASE IF NOT EXISTS sehat_saheli CHARACTER SET utf8m
 # Run migrations
 alembic upgrade head
 
+# Seed database with quiz, learn, flashcard data
+python -m app.seeds.seed_data
+
 # Start development server
 uvicorn app.main:app --reload --port 8000
 ```
@@ -71,34 +74,82 @@ sehat-saheli/
 ├── frontend/          # Next.js PWA
 │   ├── src/
 │   │   ├── app/       # Pages (App Router)
+│   │   │   ├── (auth)/     # Login & Register (public)
+│   │   │   └── (main)/     # Authenticated pages (guarded)
 │   │   ├── components/  # UI components
-│   │   ├── hooks/     # Custom React hooks
+│   │   │   ├── chat/    # Chat feature (messages, input, typing)
+│   │   │   ├── layout/  # TopBar, BottomNav, Toast, OfflineBanner
+│   │   │   └── ui/      # ShadCN primitives (Button, Card, Input...)
 │   │   ├── lib/       # Utilities, API, stores, i18n
+│   │   │   ├── api/   # Axios client + typed endpoint wrappers
+│   │   │   └── stores/  # Zustand (auth, UI, toast)
 │   │   ├── providers/ # React context providers
 │   │   └── types/     # TypeScript definitions
 │   └── public/        # Static assets + PWA manifest
 │
 ├── backend/           # FastAPI API
 │   ├── app/
-│   │   ├── api/       # Route handlers
+│   │   ├── api/v1/    # Route handlers
+│   │   │   ├── auth.py       # Register, login, profile
+│   │   │   ├── chat.py       # Chat sessions & AI messages
+│   │   │   ├── quiz.py       # Quiz categories & attempts
+│   │   │   ├── learn.py      # Health education articles
+│   │   │   ├── flashcards.py # Flashcard decks & cards
+│   │   │   └── dashboard.py  # Cycle tracking & analytics
 │   │   ├── core/      # Config, security, middleware
 │   │   ├── models/    # SQLAlchemy ORM models
 │   │   ├── schemas/   # Pydantic validation
-│   │   ├── services/  # Business logic
-│   │   └── repositories/  # Data access
+│   │   ├── services/  # Business logic (AI, auth, chat)
+│   │   └── seeds/     # Seed data (quiz, learn, flashcards)
 │   └── alembic/       # Database migrations
 ```
 
 ## Features
 
+### Phase 1 ✅ (Shipped)
 - 🤖 **AI Chatbot** — Culturally-safe health conversations in 8 languages
-- 📚 **Visual Education** — Health topics with diagrams and illustrations
-- 🧠 **Quiz Engine** — Gamified health knowledge testing
-- 🃏 **Flashcards** — Interactive learning cards
-- ❤️ **Health Dashboard** — Menstrual cycle tracker with analytics
-- 🏥 **Health Camps** — Government health camp alerts
+- 🔐 **Auth** — Phone + password registration/login with JWT
+- 💬 **Chat History** — Session management with AI-generated titles
+- 🌙 **Dark Mode** — Full app-wide dark theme with toggle
 - 📱 **PWA** — Installable, offline-first progressive web app
-- 🌐 **Multilingual** — English, Hindi, Marathi, Bengali, Tamil, Telugu, Kannada, Gujarati
+- 🍞 **Toast Notifications** — Global toast system for all actions
+
+### Phase 2 ✅ (Shipped)
+- 🧠 **Quiz Engine** — Category-based quizzes with scoring, accuracy tracking, and animated UI
+- 📚 **Health Education** — Browse categories and read articles on body, nutrition, hygiene
+- 🃏 **Flashcards** — Study decks with 3D flip animation and progress tracking
+- ❤️ **Health Dashboard** — Menstrual cycle tracker with logging, prediction, and analytics
+- 🌐 **Multilingual Content** — Quiz, learn, and flashcard content in English + Hindi
+
+### Phase 3 (Planned)
+- 🏥 **Health Camps** — Government health camp alerts with map
+- 🔔 **Push Notifications** — Period reminders and health tips
+- 📊 **Advanced Analytics** — Charts and trends for cycle data
+
+## API Endpoints
+
+| Feature | Method | Endpoint | Description |
+|---------|--------|----------|-------------|
+| Auth | POST | `/api/v1/auth/register` | Register new user |
+| Auth | POST | `/api/v1/auth/login` | Login |
+| Auth | GET | `/api/v1/auth/me` | Get profile |
+| Chat | POST | `/api/v1/chat/sessions` | Create chat session |
+| Chat | GET | `/api/v1/chat/sessions` | List sessions |
+| Chat | POST | `/api/v1/chat/sessions/{id}/messages` | Send message + AI response |
+| Chat | DELETE | `/api/v1/chat/sessions/{id}` | Delete session |
+| Quiz | GET | `/api/v1/quiz/categories` | List quiz categories |
+| Quiz | GET | `/api/v1/quiz/category/{slug}` | Get quizzes by category |
+| Quiz | POST | `/api/v1/quiz/{id}/attempt` | Submit quiz answer |
+| Quiz | GET | `/api/v1/quiz/stats` | Get user quiz stats |
+| Learn | GET | `/api/v1/learn/categories` | List learn categories |
+| Learn | GET | `/api/v1/learn/category/{slug}` | Get articles |
+| Learn | GET | `/api/v1/learn/articles/{id}` | Get single article |
+| Flashcards | GET | `/api/v1/flashcards/decks` | List flashcard decks |
+| Flashcards | GET | `/api/v1/flashcards/decks/{slug}` | Get deck cards |
+| Dashboard | POST | `/api/v1/cycles` | Log period |
+| Dashboard | GET | `/api/v1/cycles` | Get cycle history |
+| Dashboard | GET | `/api/v1/cycles/predict` | Predict next cycle |
+| Dashboard | GET | `/api/v1/cycles/analytics` | Get analytics |
 
 ## Languages Supported
 

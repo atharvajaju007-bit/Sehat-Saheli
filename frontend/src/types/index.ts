@@ -97,3 +97,110 @@ export interface SyncQueueItem {
   timestamp: number;
   retries: number;
 }
+
+// ── Quiz Types ─────────────────────────────────────────────────
+export interface QuizCategory {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string;
+  image_url?: string;
+  quiz_count: number;
+}
+
+export interface QuizQuestion {
+  id: string;
+  category_id: string;
+  question: Record<string, string>;
+  options: Record<string, string[]>;
+  image_url?: string;
+  difficulty: string;
+}
+
+export interface QuizAttempt {
+  id: string;
+  quiz_id: string;
+  selected_option: number;
+  is_correct: boolean;
+  score: number;
+  created_at: string;
+}
+
+export interface QuizResult {
+  attempt: QuizAttempt;
+  correct_option: number;
+  explanation?: string;
+}
+
+export interface QuizStats {
+  total_attempts: number;
+  correct_count: number;
+  total_score: number;
+  accuracy: number;
+}
+
+// ── Learn Types ────────────────────────────────────────────────
+export interface LearnCategory {
+  id: string;
+  name: string;
+  slug: string;
+  icon?: string;
+  order_index: number;
+  article_count: number;
+}
+
+export interface LearnArticle {
+  id: string;
+  category_id: string;
+  title: Record<string, string>;
+  content: Record<string, string>;
+  image_url?: string;
+  video_url?: string;
+  content_type: string;
+  order_index: number;
+}
+
+// ── Flashcard Types ────────────────────────────────────────────
+export interface FlashcardDeck {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string;
+  image_url?: string;
+  category: string;
+  card_count: number;
+}
+
+export interface FlashcardItem {
+  id: string;
+  deck_id: string;
+  front: Record<string, string>;
+  back: Record<string, string>;
+  image_url?: string;
+  order_index: number;
+}
+
+// ── Dashboard / Cycle Types ────────────────────────────────────
+export interface CycleLog {
+  id: string;
+  period_start: string;
+  period_end?: string;
+  cycle_length?: number;
+  symptoms?: Record<string, unknown>;
+  notes?: string;
+  created_at: string;
+}
+
+export interface CyclePrediction {
+  predicted_start: string;
+  average_cycle_length: number;
+  based_on_entries: number;
+}
+
+export interface CycleAnalytics {
+  total_logs: number;
+  average_cycle_length: number;
+  average_period_length: number;
+  shortest_cycle?: number;
+  longest_cycle?: number;
+}
