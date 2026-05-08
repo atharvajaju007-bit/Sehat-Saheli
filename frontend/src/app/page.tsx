@@ -5,10 +5,13 @@
  * Beautiful hero with animated elements and CTA buttons.
  */
 
+import { useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Heart, BookOpen, MessageCircle, Shield } from "lucide-react";
+import { useAuthStore } from "@/lib/stores";
 
 const features = [
   {
@@ -43,6 +46,15 @@ const fadeInUp = {
 };
 
 export default function LandingPage() {
+  const router = useRouter();
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.replace("/chat");
+    }
+  }, [isAuthenticated, router]);
+
   return (
     <div className="min-h-screen overflow-hidden">
       {/* Decorative Background */}
