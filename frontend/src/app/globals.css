@@ -1,0 +1,117 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+/* ── Custom Theme ─────────────────────────────────────────────── */
+@theme {
+  /* Dusty Rose */
+  --color-dusty-rose-50: #FDF5F6;
+  --color-dusty-rose-100: #F9E4E8;
+  --color-dusty-rose-200: #F0C4CC;
+  --color-dusty-rose-300: #E7A4B0;
+  --color-dusty-rose-400: #D98C9B;
+  --color-dusty-rose-500: #C66E7F;
+  --color-dusty-rose-600: #B04D61;
+  --color-dusty-rose-700: #8C3D4E;
+  --color-dusty-rose-800: #682D3A;
+  --color-dusty-rose-900: #441E27;
+
+  /* Warm Peach */
+  --color-warm-peach-50: #FFF9F3;
+  --color-warm-peach-100: #FDEED9;
+  --color-warm-peach-200: #F9D9B5;
+  --color-warm-peach-300: #F6C7A1;
+  --color-warm-peach-400: #F1A86D;
+  --color-warm-peach-500: #EC8A3A;
+  --color-warm-peach-600: #D47020;
+  --color-warm-peach-700: #A85618;
+  --color-warm-peach-800: #7D3F12;
+  --color-warm-peach-900: #52290C;
+
+  /* Lavender Mist */
+  --color-lavender-50: #F8F5FC;
+  --color-lavender-100: #EDE6F7;
+  --color-lavender-200: #DDD0F0;
+  --color-lavender-300: #C8B6E2;
+  --color-lavender-400: #B49DD5;
+  --color-lavender-500: #9B7DC4;
+  --color-lavender-600: #7E5DAE;
+  --color-lavender-700: #634A8A;
+  --color-lavender-800: #483666;
+  --color-lavender-900: #2D2242;
+
+  /* Sage Green */
+  --color-sage-50: #F4F8F3;
+  --color-sage-100: #E4EDE2;
+  --color-sage-200: #CDDDCA;
+  --color-sage-300: #B5CCB1;
+  --color-sage-400: #A8C3A0;
+  --color-sage-500: #8AAE80;
+  --color-sage-600: #6C9462;
+  --color-sage-700: #55754D;
+  --color-sage-800: #3E5638;
+  --color-sage-900: #273723;
+
+  /* Cream */
+  --color-cream: #FFF8F1;
+  --color-cream-dark: #F5EDE3;
+
+  /* Font Family */
+  --font-sans: 'Inter', 'Outfit', system-ui, -apple-system, sans-serif;
+}
+
+/* ── Base Styles ──────────────────────────────────────────────── */
+@layer base {
+  body {
+    @apply bg-cream text-gray-800 antialiased;
+    font-family: var(--font-sans);
+    -webkit-tap-highlight-color: transparent;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-dusty-rose-200);
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-dusty-rose-300);
+  }
+}
+
+/* ── Utility Classes ──────────────────────────────────────────── */
+@layer utilities {
+  .gradient-primary {
+    @apply bg-gradient-to-r from-dusty-rose-400 to-warm-peach-400;
+  }
+
+  .gradient-secondary {
+    @apply bg-gradient-to-r from-lavender-300 to-dusty-rose-300;
+  }
+
+  .gradient-text {
+    @apply bg-gradient-to-r from-dusty-rose-500 to-lavender-500 bg-clip-text text-transparent;
+  }
+
+  .glass {
+    @apply bg-white/80 backdrop-blur-md border border-white/20;
+  }
+
+  .pb-nav {
+    padding-bottom: calc(4rem + env(safe-area-inset-bottom, 0px));
+  }
+}

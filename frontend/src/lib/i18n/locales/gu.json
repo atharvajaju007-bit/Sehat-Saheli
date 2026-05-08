@@ -1,0 +1,110 @@
+{
+  "common": {
+    "appName": "Sehat Saheli",
+    "tagline": "Your Health Companion",
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "retry": "Try Again",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "back": "Back",
+    "next": "Next",
+    "submit": "Submit",
+    "search": "Search",
+    "offline": "You are offline",
+    "offlineMessage": "Some features may be limited. Your data will sync when you're back online.",
+    "install": "Install App",
+    "language": "Language"
+  },
+  "nav": {
+    "chat": "Chat",
+    "learn": "Learn",
+    "quiz": "Quiz",
+    "flashcards": "Flashcards",
+    "dashboard": "Health",
+    "healthCamps": "Health Camps",
+    "profile": "Profile"
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "loginTitle": "Welcome Back! 🌸",
+    "loginSubtitle": "Sign in to continue your health journey",
+    "registerTitle": "Join Sehat Saheli 🌺",
+    "registerSubtitle": "Start your journey to better health awareness",
+    "phone": "Phone Number",
+    "password": "Password",
+    "name": "Full Name",
+    "age": "Age",
+    "address": "Address (optional)",
+    "language": "Preferred Language",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "loginError": "Invalid phone number or password",
+    "registerError": "Registration failed. Please try again.",
+    "phoneExists": "This phone number is already registered"
+  },
+  "chat": {
+    "title": "Chat with Saheli",
+    "subtitle": "Ask me anything about health 🌸",
+    "welcome": "Hi there! 🌺 I'm Saheli, your health companion. I'm here to help you learn about your body, health, and well-being. Feel free to ask me anything!",
+    "placeholder": "Type your question...",
+    "send": "Send",
+    "newChat": "New Chat",
+    "history": "Chat History",
+    "disclaimer": "💡 This is educational information only. Please consult a healthcare provider for personalized medical advice.",
+    "thinking": "Saheli is thinking...",
+    "emptySessions": "No conversations yet. Start a new chat!",
+    "deleteConfirm": "Are you sure you want to delete this chat?"
+  },
+  "learn": {
+    "title": "Learn",
+    "subtitle": "Explore health topics through visual content",
+    "categories": {
+      "menstrual": "Menstrual Health",
+      "reproductive": "Reproductive System",
+      "anaemia": "Anaemia Awareness",
+      "hygiene": "Hygiene",
+      "nutrition": "Nutrition",
+      "puberty": "Puberty"
+    }
+  },
+  "quiz": {
+    "title": "Quiz Time!",
+    "subtitle": "Test your health knowledge",
+    "daily": "Daily Quiz",
+    "score": "Score",
+    "correct": "Correct! 🎉",
+    "incorrect": "Not quite. Let's learn!",
+    "next": "Next Question",
+    "results": "Your Results",
+    "tryAgain": "Try Again"
+  },
+  "dashboard": {
+    "title": "Health Dashboard",
+    "subtitle": "Track your health journey",
+    "cycleTracker": "Cycle Tracker",
+    "logPeriod": "Log Period",
+    "symptoms": "Symptoms",
+    "history": "History",
+    "predictions": "Predictions",
+    "analytics": "Analytics"
+  },
+  "profile": {
+    "title": "Profile",
+    "editProfile": "Edit Profile",
+    "logout": "Logout",
+    "settings": "Settings"
+  },
+  "onboarding": {
+    "welcome": "Welcome to Sehat Saheli",
+    "slide1Title": "Your Health Companion 🌸",
+    "slide1Text": "Learn about your body with a friendly AI assistant that speaks your language.",
+    "slide2Title": "Track Your Health 📊",
+    "slide2Text": "Monitor your menstrual cycle, symptoms, and get personalized insights.",
+    "slide3Title": "Learn & Grow 📚",
+    "slide3Text": "Explore health topics through quizzes, flashcards, and visual content.",
+    "getStarted": "Get Started"
+  }
+}
