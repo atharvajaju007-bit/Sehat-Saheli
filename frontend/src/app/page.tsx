@@ -5,13 +5,10 @@
  * Beautiful hero with animated elements and CTA buttons.
  */
 
-import { useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Heart, BookOpen, MessageCircle, Shield } from "lucide-react";
-import { useAuthStore } from "@/lib/stores";
 
 const features = [
   {
@@ -46,15 +43,6 @@ const fadeInUp = {
 };
 
 export default function LandingPage() {
-  const router = useRouter();
-  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      router.replace("/chat");
-    }
-  }, [isAuthenticated, router]);
-
   return (
     <div className="min-h-screen overflow-hidden">
       {/* Decorative Background */}
@@ -125,14 +113,9 @@ export default function LandingPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7, duration: 0.5 }}
         >
-          <Link href="/register" className="block">
+          <Link href="/chat" className="block">
             <Button className="w-full h-13 text-base font-semibold bg-gradient-to-r from-dusty-rose-400 to-warm-peach-400 shadow-lg shadow-dusty-rose-200/50 hover:shadow-xl transition-all">
-              Get Started 🌺
-            </Button>
-          </Link>
-          <Link href="/login" className="block">
-            <Button variant="outline" className="w-full h-12 text-base">
-              I already have an account
+              Enter Sehat Saheli 🌺
             </Button>
           </Link>
         </motion.div>

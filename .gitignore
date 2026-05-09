@@ -43,3 +43,7 @@ npm-debug.log*
 coverage/
 .pytest_cache/
 htmlcov/
+
+# Database
+*.db
+*.sqlite3

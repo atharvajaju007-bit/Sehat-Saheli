@@ -4,9 +4,10 @@
  * Chat input bar with send button.
  */
 
-import { useState, useRef, type FormEvent } from "react";
-import { Send } from "lucide-react";
+import { useState, useRef, useEffect, type FormEvent } from "react";
+import { Send, Mic, MicOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/lib/stores";
 import { cn } from "@/lib/utils";
 
 interface ChatInputProps {
@@ -17,7 +18,67 @@ interface ChatInputProps {
 
 export function ChatInput({ onSend, isLoading, placeholder = "Type your question..." }: ChatInputProps) {
   const [message, setMessage] = useState("");
+  const [isRecording, setIsRecording] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const recognitionRef = useRef<any>(null);
+  const toast = useToast();
+
+  useEffect(() => {
+    // Initialize Web Speech API for fallback STT
+    if (typeof window !== "undefined" && ("SpeechRecognition" in window || "webkitSpeechRecognition" in window)) {
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      const recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = true;
+      
+      recognition.onresult = (event: any) => {
+        let finalTranscript = "";
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          if (event.results[i].isFinal) {
+            finalTranscript += event.results[i][0].transcript;
+          }
+        }
+        if (finalTranscript) {
+          setMessage((prev) => prev + (prev ? " " : "") + finalTranscript);
+        }
+      };
+
+      recognition.onerror = (event: any) => {
+        console.error("Speech recognition error", event.error);
+        setIsRecording(false);
+        if (event.error !== "no-speech") {
+          toast.error("Microphone error. Please check permissions.");
+        }
+      };
+
+      recognition.onend = () => {
+        setIsRecording(false);
+      };
+
+      recognitionRef.current = recognition;
+    }
+  }, []);
+
+  const toggleRecording = () => {
+    if (!recognitionRef.current) {
+      toast.error("Speech recognition is not supported in this browser.");
+      return;
+    }
+
+    if (isRecording) {
+      recognitionRef.current.stop();
+      setIsRecording(false);
+    } else {
+      // Set language dynamically if we wanted, for now let browser auto-detect or use default
+      try {
+        recognitionRef.current.start();
+        setIsRecording(true);
+      } catch (err) {
+        // Handle case where it might already be started
+        setIsRecording(false);
+      }
+    }
+  };
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -73,6 +134,19 @@ export function ChatInput({ onSend, isLoading, placeholder = "Type your question
             )}
           />
         </div>
+        <Button
+          type="button"
+          size="icon"
+          onClick={toggleRecording}
+          variant={isRecording ? "default" : "outline"}
+          className={`shrink-0 rounded-full transition-colors ${
+            isRecording 
+              ? "bg-red-500 hover:bg-red-600 text-white animate-pulse shadow-md" 
+              : "border-dusty-rose-200 dark:border-gray-600 text-dusty-rose-500 hover:bg-dusty-rose-50 dark:hover:bg-gray-800"
+          }`}
+        >
+          {isRecording ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+        </Button>
         <Button
           type="submit"
           size="icon"

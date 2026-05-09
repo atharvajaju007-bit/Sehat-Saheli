@@ -12,13 +12,17 @@ import { Plus, Trash2, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MessageBubble, ChatInput, TypingIndicator } from "@/components/chat";
 import { chatApi } from "@/lib/api";
-import { useUIStore, useToast } from "@/lib/stores";
+import { useUIStore, useToast, useAuthStore } from "@/lib/stores";
 import type { ChatMessage, ChatSession } from "@/types";
+import { useTranslation } from "@/lib/i18n/useTranslation";
+import { getOfflineResponse } from "@/lib/i18n/offlineResponses";
 
 export default function ChatPage() {
   const queryClient = useQueryClient();
   const language = useUIStore((s) => s.language);
   const isOnline = useUIStore((s) => s.isOnline);
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const { t } = useTranslation();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
@@ -28,17 +32,18 @@ export default function ChatPage() {
   const toast = useToast();
 
   // Fetch chat sessions (sidebar list)
-  const { data: sessions = [] } = useQuery({
+  const { data: sessionsData = [] } = useQuery({
     queryKey: ["chatSessions"],
     queryFn: () => chatApi.listSessions(),
-    enabled: isOnline,
+    enabled: isOnline && isAuthenticated,
   });
+  const sessions = Array.isArray(sessionsData) ? sessionsData : [];
 
   // Fetch messages when switching to a different session
   const { data: sessionMessages } = useQuery({
     queryKey: ["chatMessages", activeSessionId],
     queryFn: () => chatApi.getMessages(activeSessionId!),
-    enabled: !!activeSessionId && isOnline,
+    enabled: !!activeSessionId && isOnline && isAuthenticated,
     refetchOnWindowFocus: false,
     staleTime: Infinity,
   });
@@ -158,18 +163,35 @@ export default function ChatPage() {
         created_at: new Date().toISOString(),
       };
       setMessages((prev) => [...prev, tempMsg]);
+      // Handle Offline Logic natively in the frontend
+      if (!isOnline) {
+        setIsSending(true);
+        // Simulate network delay for realism
+        await new Promise((r) => setTimeout(r, 800));
+        
+        const offlineReply = getOfflineResponse(content, language);
+        const aiMsg: ChatMessage = {
+          id: `offline-${Date.now()}`,
+          role: "assistant",
+          content: offlineReply,
+          language,
+          created_at: new Date().toISOString(),
+        };
+        
+        setMessages((prev) => [...prev.filter((m) => m.id !== tempMsg.id), tempMsg, aiMsg]);
+        setIsSending(false);
+        return;
+      }
+
       sendMessageMutation.mutate(content);
     },
-    [activeSessionId, language, sendMessageMutation, queryClient]
+    [activeSessionId, language, sendMessageMutation, queryClient, isOnline]
   );
 
   const welcomeMessage: ChatMessage = {
     id: "welcome",
     role: "assistant",
-    content:
-      language === "hi"
-        ? "नमस्ते! 🌺 मैं सहेली हूं, आपकी स्वास्थ्य साथी। मैं आपको शरीर, स्वास्थ्य और कल्याण के बारे में जानने में मदद करने के लिए यहां हूं। कुछ भी पूछें!"
-        : "Hi there! 🌺 I'm Saheli, your health companion. I'm here to help you learn about your body, health, and well-being. Feel free to ask me anything!",
+    content: t("chat.welcome"),
     language,
     created_at: new Date().toISOString(),
   };
@@ -181,7 +203,7 @@ export default function ChatPage() {
   const sessionList = (
     <div className="space-y-1.5 overflow-y-auto">
       {sessions.length === 0 ? (
-        <p className="text-xs text-gray-400 text-center py-8">No chats yet</p>
+        <p className="text-xs text-gray-400 text-center py-8">{t("chat.emptySessions")}</p>
       ) : (
         sessions.map((session: ChatSession) => (
           <div
@@ -220,7 +242,7 @@ export default function ChatPage() {
       {/* Desktop Sidebar — always visible on lg+ */}
       <div className="hidden lg:flex lg:w-64 lg:flex-col lg:border-r lg:border-dusty-rose-100 dark:lg:border-gray-700 lg:bg-white/60 dark:lg:bg-gray-800/60 lg:backdrop-blur-sm transition-colors">
         <div className="flex items-center justify-between p-4 border-b border-dusty-rose-100 dark:border-gray-700">
-          <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200">Chat History</h3>
+          <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200">{t("chat.history")}</h3>
           <Button
             variant="ghost"
             size="sm"
@@ -253,8 +275,8 @@ export default function ChatPage() {
               className="h-8 w-8 rounded-full object-cover"
             />
             <div>
-              <h2 className="text-sm font-semibold text-gray-800 dark:text-gray-200">Chat with Saheli</h2>
-              <p className="text-xs text-gray-400">Ask anything about health 🌸</p>
+              <h2 className="text-sm font-semibold text-gray-800 dark:text-gray-200">{t("chat.title")}</h2>
+              <p className="text-xs text-gray-400">{t("chat.subtitle")}</p>
             </div>
           </div>
           <Button
@@ -287,7 +309,7 @@ export default function ChatPage() {
                 transition={{ type: "spring", damping: 25 }}
                 className="fixed left-0 top-0 z-50 h-full w-72 border-r border-dusty-rose-100 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 shadow-xl lg:hidden transition-colors"
               >
-                <h3 className="mb-4 text-sm font-semibold text-gray-800 dark:text-gray-200">Chat History</h3>
+                <h3 className="mb-4 text-sm font-semibold text-gray-800 dark:text-gray-200">{t("chat.history")}</h3>
                 {sessionList}
               </motion.div>
             </>
@@ -298,7 +320,7 @@ export default function ChatPage() {
         <div className="flex-1 overflow-y-auto py-4">
           {/* Medical Disclaimer */}
           <div className="mx-4 mb-4 rounded-xl bg-gradient-to-r from-sage-50 to-sage-100 dark:from-gray-800 dark:to-gray-700 border border-sage-200 dark:border-gray-600 px-4 py-2.5 text-xs text-sage-700 dark:text-sage-300 transition-colors">
-            💡 This is educational information only. Please consult a healthcare provider for personalized medical advice.
+            {t("chat.disclaimer")}
           </div>
 
           {displayMessages.map((msg) => (
@@ -313,7 +335,7 @@ export default function ChatPage() {
         <ChatInput
           onSend={handleSend}
           isLoading={isLoading}
-          placeholder={language === "hi" ? "अपना सवाल लिखें..." : "Type your question..."}
+          placeholder={t("chat.placeholder")}
         />
       </div>
     </div>

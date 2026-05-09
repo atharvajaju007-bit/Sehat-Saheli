@@ -11,9 +11,11 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useUIStore, useToast } from "@/lib/stores";
 import { SUPPORTED_LANGUAGES } from "@/lib/constants";
 import type { LanguageCode } from "@/types";
+import { useTranslation } from "@/lib/i18n/useTranslation";
 
 export function TopBar() {
   const { language, setLanguage, theme, toggleTheme, setTheme } = useUIStore();
+  const { t } = useTranslation();
   const toast = useToast();
   const [langOpen, setLangOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -43,7 +45,7 @@ export function TopBar() {
         <Link href="/" className="flex items-center gap-2">
           <span className="text-xl">🌸</span>
           <h1 className="bg-gradient-to-r from-dusty-rose-500 to-lavender-500 bg-clip-text text-lg font-bold text-transparent">
-            Sehat Saheli
+            {t("common.appName")}
           </h1>
         </Link>
 

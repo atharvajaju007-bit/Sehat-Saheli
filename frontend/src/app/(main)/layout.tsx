@@ -2,25 +2,24 @@
 
 /**
  * Main layout — wraps all authenticated pages with TopBar and BottomNav.
- * Redirects unauthenticated users to the login page.
+ * Auto-authenticates unauthenticated users as Guest.
  */
 
 import { type ReactNode, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { TopBar, BottomNav, OfflineBanner, ToastContainer } from "@/components/layout";
 import { useAuthStore } from "@/lib/stores";
 
 export default function MainLayout({ children }: { children: ReactNode }) {
-  const router = useRouter();
-  const { isAuthenticated, fetchProfile } = useAuthStore();
+  const { isAuthenticated, fetchProfile, guestLogin } = useAuthStore();
   const [checking, setChecking] = useState(true);
 
   useEffect(() => {
     // Re-validate the stored auth state against the server
     const verify = async () => {
       if (!isAuthenticated) {
-        router.replace("/login");
+        await guestLogin();
+        setChecking(false);
         return;
       }
 
@@ -28,8 +27,9 @@ export default function MainLayout({ children }: { children: ReactNode }) {
         await fetchProfile();
         setChecking(false);
       } catch {
-        // Token expired or invalid — send to login
-        router.replace("/login");
+        // Token expired or invalid — try guest login
+        await guestLogin();
+        setChecking(false);
       }
     };
 

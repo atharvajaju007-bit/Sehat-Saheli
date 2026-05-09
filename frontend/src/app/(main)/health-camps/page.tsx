@@ -13,15 +13,21 @@ import { Button } from "@/components/ui/button";
 import { MapPin, Phone, Calendar, Building2, Search, Filter, ChevronDown, ChevronUp } from "lucide-react";
 import { healthCampApi } from "@/lib/api";
 import type { HealthCamp } from "@/types";
+import { useTranslation } from "@/lib/i18n/useTranslation";
+import { useAuthStore } from "@/lib/stores";
 
 export default function HealthCampsPage() {
+  const { t } = useTranslation();
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const [stateFilter, setStateFilter] = useState("");
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
-  const { data: camps = [], isLoading } = useQuery<HealthCamp[]>({
+  const { data: campsData = [], isLoading } = useQuery<HealthCamp[]>({
     queryKey: ["healthCamps", stateFilter],
     queryFn: () => healthCampApi.list({ state: stateFilter || undefined, upcoming: true }),
+    enabled: isAuthenticated,
   });
+  const camps = Array.isArray(campsData) ? campsData : [];
 
   const states = [...new Set(camps.map((c) => c.state))].sort();
 
@@ -48,7 +54,7 @@ export default function HealthCampsPage() {
     <div className="mx-auto max-w-lg px-4 py-6 pb-nav">
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
         <h1 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-1">
-          Health Camps 🏥
+          {t("nav.healthCamps")} 🏥
         </h1>
         <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
           Upcoming government & NGO health camps near you

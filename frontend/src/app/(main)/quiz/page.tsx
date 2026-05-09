@@ -11,13 +11,16 @@ import { Brain, Trophy, Zap, ArrowLeft, CheckCircle2, XCircle } from "lucide-rea
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { quizApi } from "@/lib/api";
-import { useUIStore, useToast } from "@/lib/stores";
+import { useUIStore, useToast, useAuthStore } from "@/lib/stores";
 import type { QuizQuestion, QuizCategory } from "@/types";
+import { useTranslation } from "@/lib/i18n/useTranslation";
 
 type View = "categories" | "quiz" | "result";
 
 export default function QuizPage() {
   const language = useUIStore((s) => s.language);
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const { t } = useTranslation();
   const toast = useToast();
   const queryClient = useQueryClient();
 
@@ -31,15 +34,18 @@ export default function QuizPage() {
   const [answered, setAnswered] = useState(0);
 
   // Fetch categories
-  const { data: categories = [] } = useQuery({
+  const { data: categoriesData = [] } = useQuery({
     queryKey: ["quizCategories"],
     queryFn: quizApi.listCategories,
+    enabled: isAuthenticated,
   });
+  const categories = Array.isArray(categoriesData) ? categoriesData : [];
 
   // Fetch stats
   const { data: stats } = useQuery({
     queryKey: ["quizStats"],
     queryFn: quizApi.getStats,
+    enabled: isAuthenticated,
   });
 
   // Submit answer mutation
@@ -103,8 +109,8 @@ export default function QuizPage() {
         {/* ── Categories View ── */}
         {view === "categories" && (
           <motion.div key="cats" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <h1 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-1">Quiz Time! 🧠</h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">Test your health knowledge and earn points</p>
+            <h1 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-1">{t("quiz.title")} 🧠</h1>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">{t("quiz.subtitle")}</p>
 
             {/* Stats bar */}
             <div className="grid grid-cols-3 gap-3 mb-6">
@@ -152,7 +158,7 @@ export default function QuizPage() {
         {view === "quiz" && q && (
           <motion.div key="quiz" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
             <button onClick={() => setView("categories")} className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400 mb-4 hover:text-dusty-rose-500">
-              <ArrowLeft className="h-4 w-4" /> Back
+              <ArrowLeft className="h-4 w-4" /> {t("common.back")}
             </button>
 
             {/* Progress */}
@@ -160,7 +166,7 @@ export default function QuizPage() {
               <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
                 Question {currentIdx + 1} of {questions.length}
               </span>
-              <span className="text-sm font-bold text-dusty-rose-500">Score: {score}</span>
+              <span className="text-sm font-bold text-dusty-rose-500">{t("quiz.score")}: {score}</span>
             </div>
             <div className="h-2 w-full rounded-full bg-gray-200 dark:bg-gray-700 mb-6">
               <motion.div
@@ -228,7 +234,7 @@ export default function QuizPage() {
             {selected !== null && correctAnswer !== null && (
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mt-6">
                 <Button onClick={nextQuestion} className="w-full h-12 text-base font-semibold bg-gradient-to-r from-dusty-rose-400 to-warm-peach-400">
-                  {currentIdx < questions.length - 1 ? "Next Question →" : "See Results 🎉"}
+                  {currentIdx < questions.length - 1 ? `${t("quiz.next")} →` : `${t("quiz.results")} 🎉`}
                 </Button>
               </motion.div>
             )}
@@ -263,7 +269,7 @@ export default function QuizPage() {
 
             <div className="space-y-3">
               <Button onClick={() => startQuiz(activeCategory!)} className="w-full h-12 bg-gradient-to-r from-dusty-rose-400 to-warm-peach-400">
-                Try Again 🔄
+                {t("quiz.tryAgain")} 🔄
               </Button>
               <Button variant="outline" onClick={() => setView("categories")} className="w-full h-12">
                 Choose Another Topic

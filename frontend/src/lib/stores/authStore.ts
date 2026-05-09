@@ -27,6 +27,7 @@ interface AuthState {
   }) => Promise<void>;
   logout: () => void;
   fetchProfile: () => Promise<void>;
+  guestLogin: () => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -78,6 +79,24 @@ export const useAuthStore = create<AuthState>()(
         } catch {
           set({ user: null, isAuthenticated: false });
           tokenStorage.clearTokens();
+        }
+      },
+
+      guestLogin: async () => {
+        set({ isLoading: true });
+        try {
+          // Use hardcoded guest credentials seeded in backend
+          const tokens = await authApi.login({ 
+            phone: "9999999999", 
+            password: "password123" 
+          });
+          tokenStorage.setTokens(tokens.access_token, tokens.refresh_token);
+
+          const user = await authApi.getProfile();
+          set({ user, isAuthenticated: true, isLoading: false });
+        } catch (error) {
+          set({ isLoading: false });
+          console.error("Guest login failed:", error);
         }
       },
     }),

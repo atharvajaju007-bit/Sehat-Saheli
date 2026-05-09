@@ -11,29 +11,33 @@ import { ArrowLeft, ChevronLeft, ChevronRight, RotateCcw, Layers } from "lucide-
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { flashcardApi } from "@/lib/api";
-import { useUIStore, useToast } from "@/lib/stores";
+import { useUIStore, useToast, useAuthStore } from "@/lib/stores";
 import type { FlashcardDeck, FlashcardItem } from "@/types";
 
 type View = "decks" | "study";
 
 export default function FlashcardsPage() {
   const language = useUIStore((s) => s.language);
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const toast = useToast();
   const [view, setView] = useState<View>("decks");
   const [activeSlug, setActiveSlug] = useState<string | null>(null);
   const [cardIdx, setCardIdx] = useState(0);
   const [flipped, setFlipped] = useState(false);
 
-  const { data: decks = [] } = useQuery({
+  const { data: decksData = [] } = useQuery({
     queryKey: ["flashcardDecks"],
     queryFn: flashcardApi.listDecks,
+    enabled: isAuthenticated,
   });
+  const decks = Array.isArray(decksData) ? decksData : [];
 
-  const { data: cards = [] } = useQuery({
+  const { data: cardsData = [] } = useQuery({
     queryKey: ["flashcardCards", activeSlug],
     queryFn: () => flashcardApi.getDeckCards(activeSlug!),
-    enabled: !!activeSlug,
+    enabled: !!activeSlug && isAuthenticated,
   });
+  const cards = Array.isArray(cardsData) ? cardsData : [];
 
   const openDeck = async (slug: string) => {
     setActiveSlug(slug);

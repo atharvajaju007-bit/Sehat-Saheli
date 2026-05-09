@@ -13,29 +13,36 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cycleApi } from "@/lib/api";
-import { useToast } from "@/lib/stores";
+import { useToast, useAuthStore } from "@/lib/stores";
 import type { CycleLog } from "@/types";
+import { useTranslation } from "@/lib/i18n/useTranslation";
 
 export default function DashboardPage() {
+  const { t } = useTranslation();
   const toast = useToast();
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const queryClient = useQueryClient();
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ period_start: "", period_end: "", cycle_length: "", notes: "" });
 
-  const { data: cycles = [] } = useQuery({
+  const { data: cyclesData = [] } = useQuery({
     queryKey: ["cycles"],
     queryFn: () => cycleApi.listCycles(),
+    enabled: isAuthenticated,
   });
+  const cycles = Array.isArray(cyclesData) ? cyclesData : [];
 
   const { data: analytics } = useQuery({
     queryKey: ["cycleAnalytics"],
     queryFn: cycleApi.analytics,
+    enabled: isAuthenticated,
   });
 
   const { data: prediction } = useQuery({
     queryKey: ["cyclePrediction"],
     queryFn: cycleApi.predict,
     retry: false,
+    enabled: isAuthenticated,
   });
 
   const logMutation = useMutation({
@@ -80,8 +87,8 @@ export default function DashboardPage() {
   return (
     <div className="mx-auto max-w-lg px-4 py-6">
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-        <h1 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-1">Health Dashboard ❤️</h1>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">Track your cycle and understand your body</p>
+        <h1 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-1">{t("dashboard.title")} ❤️</h1>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">{t("dashboard.subtitle")}</p>
       </motion.div>
 
       {/* Prediction card */}
@@ -124,7 +131,7 @@ export default function DashboardPage() {
         onClick={() => setShowForm(!showForm)}
         className="w-full mb-4 h-11 bg-gradient-to-r from-dusty-rose-400 to-warm-peach-400"
       >
-        <Plus className="h-4 w-4 mr-1" /> Log Period
+        <Plus className="h-4 w-4 mr-1" /> {t("dashboard.logPeriod")}
       </Button>
 
       {/* Log form */}
@@ -159,7 +166,7 @@ export default function DashboardPage() {
       )}
 
       {/* Cycle history */}
-      <h2 className="text-sm font-semibold text-gray-600 dark:text-gray-300 mb-3 uppercase tracking-wide">History</h2>
+      <h2 className="text-sm font-semibold text-gray-600 dark:text-gray-300 mb-3 uppercase tracking-wide">{t("dashboard.history")}</h2>
       <div className="space-y-2">
         {cycles.length === 0 && (
           <p className="text-center text-sm text-gray-400 py-8">No entries yet. Log your first period above! 🌸</p>

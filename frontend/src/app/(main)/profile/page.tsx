@@ -6,11 +6,13 @@ import { Button } from "@/components/ui/button";
 import { User, Settings, LogOut, ChevronRight, Globe, Bell, Shield } from "lucide-react";
 import { useAuthStore, useUIStore, useToast } from "@/lib/stores";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "@/lib/i18n/useTranslation";
 
 export default function ProfilePage() {
   const router = useRouter();
   const { user, logout } = useAuthStore();
   const language = useUIStore((s) => s.language);
+  const { t } = useTranslation();
   const toast = useToast();
 
   const handleLogout = () => {
@@ -20,10 +22,10 @@ export default function ProfilePage() {
   };
 
   const menuItems = [
-    { icon: Globe, label: "Language", value: language.toUpperCase(), href: "#" },
+    { icon: Globe, label: t("common.language"), value: language.toUpperCase(), href: "#" },
     { icon: Bell, label: "Notifications", value: "On", href: "#" },
     { icon: Shield, label: "Privacy", value: "", href: "#" },
-    { icon: Settings, label: "Settings", value: "", href: "#" },
+    { icon: Settings, label: t("profile.settings"), value: "", href: "#" },
   ];
 
   return (
@@ -71,7 +73,7 @@ export default function ProfilePage() {
           onClick={handleLogout}
         >
           <LogOut className="h-4 w-4 mr-2" />
-          Logout
+          {t("profile.logout")}
         </Button>
       </motion.div>
     </div>

@@ -10,17 +10,19 @@ import { usePathname } from "next/navigation";
 import { MessageCircle, BookOpen, Brain, Heart, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
-
-const navItems = [
-  { href: "/chat", label: "Chat", icon: MessageCircle },
-  { href: "/learn", label: "Learn", icon: BookOpen },
-  { href: "/quiz", label: "Quiz", icon: Brain },
-  { href: "/dashboard", label: "Health", icon: Heart },
-  { href: "/profile", label: "Profile", icon: User },
-];
+import { useTranslation } from "@/lib/i18n/useTranslation";
 
 export function BottomNav() {
   const pathname = usePathname();
+  const { t } = useTranslation();
+
+  const navItems = [
+    { href: "/chat", label: t("nav.chat"), icon: MessageCircle },
+    { href: "/learn", label: t("nav.learn"), icon: BookOpen },
+    { href: "/quiz", label: t("nav.quiz"), icon: Brain },
+    { href: "/dashboard", label: t("nav.dashboard"), icon: Heart },
+    { href: "/profile", label: t("nav.profile"), icon: User },
+  ];
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-dusty-rose-100 dark:border-gray-700 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md safe-area-bottom transition-colors">
