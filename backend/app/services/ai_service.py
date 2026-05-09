@@ -13,6 +13,9 @@ from app.services.translation_service import get_translation_service
 logger = get_logger(__name__)
 settings = get_settings()
 
+# ── Translation service singleton ────────────────────────────────
+translator = get_translation_service()
+
 
 # ── Language Config & Rules ──────────────────────────────────────
 LANGUAGE_NAMES: dict[str, str] = {
@@ -90,7 +93,7 @@ Keep replies to 2-4 short paragraphs. Use friendly emojis like 🌺 ❤️ 🩺.
 class GeminiAIService:
     """Google Gemini AI integration using the new google-genai SDK."""
 
-    MODEL_NAME = "gemini-2.5-flash"
+    MODEL_NAME = "gemini-2.0-flash"
 
     def __init__(self) -> None:
         if settings.GEMINI_API_KEY:
